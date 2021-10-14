@@ -1,34 +1,31 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# alphagen Gallery
 
-## Getting Started
+alphagen is a minting platform and art gallery built on top of the Solana blockchain.
 
-First, run the development server:
+alphagen NFTs are available for anyone to use. However, owning an ‘alpha NFT’ is your pass to create and mint curated projects on the alphagen platform.
 
-```bash
-npm run dev
-# or
-yarn dev
-```
+The first alpha NFTs will be distributed for FREE to all Solana Monkey Business holders over a 3 day period. Unclaimed alpha NFTs will then be sold in a fair mint along with 100 genesis alpha NFTs.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+There will be a total of 5,500 alpha NFTs.
+## Roadmap
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+- Note: Roadmap is subject to change depending on community participation and votes.
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+![Roadmap](https://github.com/alpha-sol/alpha-frontend/blob/main/resources/github/roadmap.png)
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+## Anatomy
 
-## Learn More
+- alpha NFTs are 16 characters in a 4x4 matrix. Characters are normally distributed (i.e Bell Curve), where letters at the extremes (a, b, c, ...., x, y , z) are more rare than letters in the middle of the alphabet.
+- alpha NFTs can be visually represented by any 26 character alphabet.
 
-To learn more about Next.js, take a look at the following resources:
+![Roadmap](https://github.com/alpha-sol/alpha-frontend/blob/main/resources/github/anatomy.png)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Create
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+- Possessing an alpha NFT is your pass to our minting platform and gallery for curated art, music, games, competitions, and more.
+- We will also provide open-source tools to developers and creatives who want to use alpha in their non-curated mints. We are extremely excited to see our community creates with the alpha primitive NFT.
 
-## Deploy on Vercel
+![Create](https://github.com/alpha-sol/alpha-frontend/blob/main/resources/github/how-to-use.png)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+[Join our Discord](https://discord.gg/w8wb2mGFJu)
+[Follow our Twitter](https://twitter.com/alphagenGallery)
