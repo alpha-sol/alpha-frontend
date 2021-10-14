@@ -64,11 +64,13 @@ export default async function handler(
 
     if (nftMetadata.length === 0) {
       res.status(200).json({ mints: [] });
+      return;
     }
 
     const mergedNFTRecords = await getTargetMintsMetadata(nftMetadata);
 
     res.status(200).json({ mints: mergedNFTRecords });
+    return;
   } catch (e) {
     console.error(e);
     // TODO: Don't show errors for now
