@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="180" height="180" viewBox="0 0 180 180">
+  <defs>
+    <clipPath id="clip-transparent-logo">
+      <rect width="180" height="180"/>
+    </clipPath>
+  </defs>
+  <g id="transparent-logo" clip-path="url(#clip-transparent-logo)">
+    <text id="a" transform="translate(30 146)" fill="#fff" font-size="201" font-family="Monaco"><tspan x="0" y="0">a</tspan></text>
+  </g>
+</svg>

@@ -1,0 +1,29 @@
+{
+  "name": "existing-target-nft-agen 3",
+  "symbol": "AGSMB",
+  "description": "test for existing-target-nft-agen id 3",
+  "image": "https://www.arweave.net/JahF6mQzscbxHm5wV9xmbtFP4cDlE7hwncnyifAHe1M?ext=png",
+  "seller_fee_basis_points": 250,
+  "external_url": "https://testing.test/",
+  "update_authority": "5qUj7qm8iD4ZuCKSnDFqS1N3e9ybT9kHg1i4hFxxj2xM",
+  "primary_sale_happened": false,
+  "collection": {
+    "name": "existing-target-nft-agen",
+    "family": "existing-target-nft-agen-family"
+  },
+  "properties": {
+    "files": [
+      {
+        "uri": "https://www.arweave.net/JahF6mQzscbxHm5wV9xmbtFP4cDlE7hwncnyifAHe1M?ext=png",
+        "type": "image/png"
+      }
+    ],
+    "creators": [
+      {
+        "address": "5qUj7qm8iD4ZuCKSnDFqS1N3e9ybT9kHg1i4hFxxj2xM",
+        "share": 100
+      }
+    ]
+  },
+  "attributes": [{ "trait_type": "Generation", "value": 0 }]
+}
