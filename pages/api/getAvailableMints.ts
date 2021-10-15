@@ -62,11 +62,10 @@ export default async function handler(
         HOLDER_TARGET_NFT_AUTHORITIES.includes(account!.updateAuthority)
       ) as unknown as Metadata[];
 
-    if (nftMetadata.length === 0) {
+    if (!nftMetadata || nftMetadata.length === 0) {
       res.status(200).json({ mints: [] });
       return;
     }
-
     const mergedNFTRecords = await getTargetMintsMetadata(nftMetadata);
 
     res.status(200).json({ mints: mergedNFTRecords });
