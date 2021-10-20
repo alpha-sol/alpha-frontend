@@ -108,6 +108,18 @@ const Header = ({ pageProps: { pageKey } }: PageProps) => {
         >
           {!walletShortValue ? (
             <StyledWalletDialogButton>Connect Wallet</StyledWalletDialogButton>
+          ) : (
+            <MintButton
+              callToAction="Disconnect"
+              onPress={() => {
+                if (window) {
+                  window.location.reload();
+                }
+              }}
+            />
+          )}
+          {/* {!walletShortValue ? (
+            <StyledWalletDialogButton>Connect Wallet</StyledWalletDialogButton>
           ) : walletRedeemables ? (
             <MintLinkButton
               callToAction="Redeem"
@@ -123,7 +135,7 @@ const Header = ({ pageProps: { pageKey } }: PageProps) => {
                 }
               }}
             />
-          )}
+          )} */}
         </div>
       </div>
     </div>
