@@ -1,6 +1,5 @@
 module.exports = {
   purge: [
-    './airtable/**/*.{js,ts,jsx,tsx}',
     './alpha/**/*.{js,ts,jsx,tsx}',
     './anchor/**/*.{js,ts,jsx,tsx}',
     './components/**/*.{js,ts,jsx,tsx}',

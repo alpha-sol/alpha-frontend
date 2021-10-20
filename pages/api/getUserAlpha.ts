@@ -2,8 +2,6 @@ import { AccountInfo, Connection, PublicKey } from '@solana/web3.js';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import BN from 'bn.js';
 
-const NETWORK = process.env.NETWORK!;
-
 type Data = {
   alphaCount: number | null;
 };
@@ -39,7 +37,7 @@ export default async function handler(
     });
     // @ts-ignore
     const alphaCount = response.value.reduce((value, account) => {
-      const balance = getSplTokenBalanceFromAccountInfo(account.account, 0);
+      const balance = getSplTokenBalanceFromAccountInfo(account.account, 9);
       return value + balance;
     }, 0);
 

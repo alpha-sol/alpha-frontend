@@ -1,10 +1,9 @@
-import Image from 'next/image';
 import Link from 'next/link';
 import { PageProps } from '../types';
 import { WalletDialogButton } from '@solana/wallet-adapter-material-ui';
 import styled from '@emotion/styled';
 import { useMint } from '../mint/MintProvider';
-import { MintButton, MintLinkButton } from './Button';
+import { MintLinkButton } from './Button';
 import { useAlpha } from '../alpha/AlphaProvider';
 import { AlphaLogo } from './AlphaLogo';
 
@@ -61,7 +60,7 @@ const Routes = [
 ];
 
 const Header = ({ pageProps: { pageKey } }: PageProps) => {
-  const { walletShortValue, walletRedeemables } = useMint();
+  const { walletShortValue } = useMint();
   const { alphaCount } = useAlpha();
   return (
     <div className="flex flex-row justify-between items-center py-8 w-full px-6">
@@ -108,20 +107,11 @@ const Header = ({ pageProps: { pageKey } }: PageProps) => {
         >
           {!walletShortValue ? (
             <StyledWalletDialogButton>Connect Wallet</StyledWalletDialogButton>
-          ) : walletRedeemables ? (
-            <MintLinkButton
-              callToAction="Redeem"
-              href="/redeem"
-              className={'bg-green-800 text-white'}
-            />
           ) : (
-            <MintButton
-              callToAction="Disconnect"
-              onPress={() => {
-                if (window) {
-                  window.location.reload();
-                }
-              }}
+            <MintLinkButton
+              callToAction="Mint"
+              href="/mint"
+              className={'bg-green-800 text-white'}
             />
           )}
         </div>
