@@ -89,7 +89,6 @@ const MintProvider = ({ children }: { children: ReactNode }) => {
         }),
       });
       const { mints } = await res.json();
-      if (mints.length === 0) return;
       setWalletRedeemables(mints);
       setMintProviderIsLoading(false);
     })();
