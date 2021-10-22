@@ -11,12 +11,12 @@ import {
 import { useAlpha } from '../alpha/AlphaProvider';
 
 import {
-  CandyMachine,
-  awaitTransactionSignatureConfirmation,
+  CandyMachineAccount,
   getCandyMachineState,
   mintOneToken,
   shortenAddress,
 } from '../lib/candyMachine';
+import { awaitTransactionSignatureConfirmation } from '../lib/connection';
 import { useNotifications } from '../notifications/NotificationProvider';
 
 const treasury = new anchor.web3.PublicKey(
@@ -76,28 +76,32 @@ const MintProvider = ({ children }: { children: ReactNode }) => {
   const [hasSoldOut, setHasSoldOut] = useState(false);
 
   const wallet = useAnchorWallet();
-  const [candyMachine, setCandyMachine] = useState<CandyMachine>();
+  const [candyMachine, setCandyMachine] = useState<CandyMachineAccount>();
 
   const { sendNotification } = useNotifications();
-  const { fetchAlphaCount } = useAlpha();
+  const { alphaCount, setOptimisticCount } = useAlpha();
 
   const refreshCandyMachineState = useCallback(() => {
+    console.log('refreshing');
     (async () => {
       if (!wallet) return;
       setMintProviderIsLoading(true);
-      const { candyMachine, itemsAvailable, itemsRemaining, itemsRedeemed } =
-        await getCandyMachineState(
-          wallet as anchor.Wallet,
-          candyMachineId,
-          connection
-        );
+      const { id, program, state } = await getCandyMachineState(
+        wallet as anchor.Wallet,
+        candyMachineId,
+        connection
+      );
+      const { itemsAvailable, itemsRemaining, itemsRedeemed } = state;
 
       setItemsAvailable(itemsAvailable);
       setItemsRemaining(itemsRemaining);
       setItemsRedeemed(itemsRedeemed);
-
       setHasSoldOut(itemsRemaining === 0);
-      setCandyMachine(candyMachine);
+      setCandyMachine({
+        id,
+        program,
+        state,
+      });
       setMintProviderIsLoading(false);
     })();
   }, [wallet]);
@@ -116,13 +120,7 @@ const MintProvider = ({ children }: { children: ReactNode }) => {
     try {
       setIsMinting(true);
       if (wallet && candyMachine?.program) {
-        const mintTxId = await mintOneToken(
-          candyMachine,
-          config,
-          wallet.publicKey,
-          treasury
-        );
-
+        const mintTxId = await mintOneToken(candyMachine, wallet.publicKey);
         const status = await awaitTransactionSignatureConfirmation(
           mintTxId,
           txTimeout,
@@ -130,17 +128,19 @@ const MintProvider = ({ children }: { children: ReactNode }) => {
           'singleGossip',
           false
         );
-
         if (!status?.err) {
           sendNotification('Congratulations!', `Mint succeeded!`, 'success');
+          setOptimisticCount((alphaCount || 1) - 1);
+          setItemsRedeemed(itemsRedeemed + 1);
         } else {
           sendNotification('Mint failed! ', `Please try again!`, 'danger');
         }
       }
     } catch (error: any) {
-      // TODO: blech:
+      // triggers refresh
+      setOptimisticCount(alphaCount || 0);
       let message = error.msg || 'Minting failed! Please try again!';
-      if (!error.msg) {
+      if (error.message) {
         if (error.message.indexOf('0x138')) {
         } else if (error.message.indexOf('0x137')) {
           message = `SOLD OUT!`;
@@ -158,11 +158,10 @@ const MintProvider = ({ children }: { children: ReactNode }) => {
 
       sendNotification('Mint failed! ', message, 'danger');
     } finally {
-      if (wallet) {
-        fetchAlphaCount();
-      }
       setIsMinting(false);
-      refreshCandyMachineState();
+      setTimeout(() => {
+        refreshCandyMachineState();
+      }, 30000);
     }
   };
 

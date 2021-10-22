@@ -9,17 +9,7 @@ const FAQ: NextPage<Record<string, unknown>> = () => {
   const router = useRouter();
   const [lastMint, setLastMint] = useState(0);
 
-  const {
-    walletShortValue,
-    itemsRemaining,
-    itemsRedeemed,
-    itemsAvailable,
-    onMint,
-  } = useMint();
-
-  console.log('---------');
-  console.log(itemsRedeemed);
-  console.log(itemsRemaining);
+  const { walletShortValue, itemsRedeemed, itemsAvailable, onMint } = useMint();
 
   useEffect(() => {
     if (!walletShortValue) {

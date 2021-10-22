@@ -2,8 +2,14 @@ import { AccountInfo, Connection, PublicKey } from '@solana/web3.js';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import BN from 'bn.js';
 
+interface TokenAccount {
+  publicKey: string;
+  balance: number;
+}
+
 type Data = {
   alphaCount: number | null;
+  tokenAccounts: TokenAccount[] | null;
 };
 
 const divideBnToNumber = (numerator: BN, denominator: BN): number => {
@@ -32,6 +38,7 @@ export default async function handler(
     // @ts-ignore
     const connection = new Connection(process.env.NEXT_PUBLIC_SOLANA_RPC_HOST!);
 
+    const tokenAccounts: TokenAccount[] = [];
     const response = await connection.getTokenAccountsByOwner(userPublicKey, {
       mint: new PublicKey(process.env.MINT_SPL_TOKEN_ADDRESS!),
     });
@@ -39,14 +46,24 @@ export default async function handler(
     // @ts-ignore
     const alphaCount = response.value.reduce((value, account) => {
       const balance = getSplTokenBalanceFromAccountInfo(account.account, 0);
+      tokenAccounts.push({
+        publicKey: account.pubkey.toBase58(),
+        balance,
+      });
       return value + balance;
     }, 0);
 
-    res.status(200).json({ alphaCount: Math.floor(alphaCount) });
+    res.status(200).json({
+      alphaCount: Math.floor(alphaCount),
+      tokenAccounts,
+    });
   } catch (e) {
     console.error(e);
     // TODO: Don't show errors for now
-    res.status(200).json({ alphaCount: null });
+    res.status(200).json({
+      alphaCount: null,
+      tokenAccounts: null,
+    });
     // res.status(500);
   }
 }
