@@ -40,8 +40,8 @@ const About: NextPage<Props> = (props) => {
           src={
             monke
               ? // @ts-ignore
-                `/assets/alpha/${monke.mintId}${imagePostfix}.png`
-              : `/assets/alpha/alpha-smb-1${imagePostfix}.png`
+                `/assets/alpha-home/${monke.mintId}${imagePostfix}.png`
+              : `/assets/alpha-home/alpha-smb-1${imagePostfix}.png`
           }
           width={450}
           height={450}

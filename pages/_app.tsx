@@ -24,9 +24,9 @@ const WalletConnectionProvider = dynamic(
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <WalletConnectionProvider>
-      <MintProvider>
+      <NotificationProvider>
         <AlphaProvider>
-          <NotificationProvider>
+          <MintProvider>
             <ReactNotification />
             <div className="bg-black flex flex-col items-center min-h-screen">
               <Header pageProps={pageProps} />
@@ -35,9 +35,9 @@ function MyApp({ Component, pageProps }: AppProps) {
               </div>
               <Footer />
             </div>
-          </NotificationProvider>
+          </MintProvider>
         </AlphaProvider>
-      </MintProvider>
+      </NotificationProvider>
     </WalletConnectionProvider>
   );
 }

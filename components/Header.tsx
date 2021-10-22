@@ -3,7 +3,7 @@ import { PageProps } from '../types';
 import { WalletDialogButton } from '@solana/wallet-adapter-material-ui';
 import styled from '@emotion/styled';
 import { useMint } from '../mint/MintProvider';
-import { MintLinkButton } from './Button';
+import { MintButton, MintLinkButton } from './Button';
 import { useAlpha } from '../alpha/AlphaProvider';
 import { AlphaLogo } from './AlphaLogo';
 
@@ -107,11 +107,20 @@ const Header = ({ pageProps: { pageKey } }: PageProps) => {
         >
           {!walletShortValue ? (
             <StyledWalletDialogButton>Connect Wallet</StyledWalletDialogButton>
-          ) : (
+          ) : alphaCount ? (
             <MintLinkButton
               callToAction="Mint"
               href="/mint"
               className={'bg-green-800 text-white'}
+            />
+          ) : (
+            <MintButton
+              callToAction="Disconnect"
+              onPress={() => {
+                if (window) {
+                  window.location.reload();
+                }
+              }}
             />
           )}
         </div>

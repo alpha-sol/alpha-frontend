@@ -35,9 +35,10 @@ export default async function handler(
     const response = await connection.getTokenAccountsByOwner(userPublicKey, {
       mint: new PublicKey(process.env.MINT_SPL_TOKEN_ADDRESS!),
     });
+
     // @ts-ignore
     const alphaCount = response.value.reduce((value, account) => {
-      const balance = getSplTokenBalanceFromAccountInfo(account.account, 9);
+      const balance = getSplTokenBalanceFromAccountInfo(account.account, 0);
       return value + balance;
     }, 0);
 
