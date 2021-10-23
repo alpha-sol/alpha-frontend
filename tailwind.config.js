@@ -1,6 +1,5 @@
 module.exports = {
   purge: [
-    './airtable/**/*.{js,ts,jsx,tsx}',
     './alpha/**/*.{js,ts,jsx,tsx}',
     './anchor/**/*.{js,ts,jsx,tsx}',
     './components/**/*.{js,ts,jsx,tsx}',
@@ -23,12 +22,14 @@ module.exports = {
     colors: {
       black: '#181818',
       white: '#FFFFFF',
+      'white-100': '#777777',
       gray: '#303030',
       green: '#143E46',
       'green-100': '#00C17C',
       blue: '#00c7e2',
       red: '#461D14',
       orange: '#E2841D',
+      purple: '#9100AC',
     },
     fontFamily: {
       sans: ['Open Sauce Sans', 'sans-serif'],

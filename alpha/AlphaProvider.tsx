@@ -11,12 +11,13 @@ import {
 interface AlphaContextValue {
   alphaCount: number | null;
   fetchAlphaCount: () => void;
+  setOptimisticCount: (count: number) => void;
 }
 
 const AlphaContext = createContext<AlphaContextValue>({
   alphaCount: null,
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  fetchAlphaCount: () => {},
+  fetchAlphaCount: () => null,
+  setOptimisticCount: () => null,
 });
 
 const AlphaProvider = ({ children }: { children: ReactNode }) => {
@@ -41,6 +42,17 @@ const AlphaProvider = ({ children }: { children: ReactNode }) => {
     }
   }, [wallet]);
 
+  const setOptimisticCount = useCallback(
+    (count: number) => {
+      setAlphaCount(count);
+      setTimeout(() => {
+        console.log('fetching alpha count');
+        fetchAlphaCount();
+      }, 20000);
+    },
+    [fetchAlphaCount]
+  );
+
   useEffect(() => {
     if (!wallet) {
       setAlphaCount(null);
@@ -54,6 +66,7 @@ const AlphaProvider = ({ children }: { children: ReactNode }) => {
       value={{
         alphaCount,
         fetchAlphaCount,
+        setOptimisticCount,
       }}
     >
       {children}

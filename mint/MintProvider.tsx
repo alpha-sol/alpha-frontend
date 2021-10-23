@@ -1,4 +1,4 @@
-// import * as anchor from '@project-serum/anchor';
+import * as anchor from '@project-serum/anchor';
 import { useAnchorWallet } from '@solana/wallet-adapter-react';
 import {
   useState,
@@ -6,54 +6,61 @@ import {
   ReactNode,
   useEffect,
   useContext,
+  useCallback,
 } from 'react';
-import { TargetMintItem } from '../airtable/mints';
+import { useAlpha } from '../alpha/AlphaProvider';
+
 import {
-  // CandyMachine,
-  // getCandyMachineState,
+  CandyMachineAccount,
+  getCandyMachineState,
+  mintOneToken,
   shortenAddress,
 } from '../lib/candyMachine';
+import { awaitTransactionSignatureConfirmation } from '../lib/connection';
+import { useNotifications } from '../notifications/NotificationProvider';
 
-// const treasury = new anchor.web3.PublicKey(
-//   process.env.NEXT_PUBLIC_TREASURY_ADDRESS!
-// );
+const treasury = new anchor.web3.PublicKey(
+  process.env.NEXT_PUBLIC_TREASURY_ADDRESS!
+);
 
-// const config = new anchor.web3.PublicKey(
-//   process.env.NEXT_PUBLIC_CANDY_MACHINE_CONFIG!
-// );
+const config = new anchor.web3.PublicKey(
+  process.env.NEXT_PUBLIC_CANDY_MACHINE_CONFIG!
+);
 
-// const candyMachineId = new anchor.web3.PublicKey(
-//   process.env.NEXT_PUBLIC_CANDY_MACHINE_ID!
-// );
+const candyMachineId = new anchor.web3.PublicKey(
+  process.env.NEXT_PUBLIC_CANDY_MACHINE_ID!
+);
 
-// const rpcHost = process.env.NEXT_PUBLIC_SOLANA_RPC_HOST!;
+const rpcHost = process.env.NEXT_PUBLIC_SOLANA_RPC_HOST!;
 
-// const connection = new anchor.web3.Connection(rpcHost);
+const connection = new anchor.web3.Connection(rpcHost);
 
-// const startDateSeed = new Date(
-//   parseInt(process.env.NEXT_PUBLIC_CANDY_START_DATE!, 10)
-// );
+const txTimeout = 30000; // milliseconds (confirm this works for your project)
 
-// const txTimeout = 30000; // milliseconds (confirm this works for your project)
+const mintAvailableItems = 746;
 
 interface MintProviderContextValue {
   mintProviderIsLoading: boolean;
+  isMinting: boolean;
   walletShortValue: string | null;
   walletIsConnected: boolean;
-  walletRedeemables: TargetMintItem[] | null;
-  // mintHasStarted: boolean;
-  // mintHasSoldOut: boolean;
-  // startDate: Date | null;
+  itemsAvailable: number;
+  itemsRemaining: number;
+  itemsRedeemed: number;
+  hasSoldOut: boolean;
+  onMint: () => void;
 }
 
 const defaultContext = {
   mintProviderIsLoading: false,
+  isMinting: false,
   walletShortValue: null,
   walletIsConnected: false,
-  walletRedeemables: null,
-  // mintHasStarted: false,
-  // mintHasSoldOut: false,
-  // startDate: null,
+  itemsAvailable: 0,
+  itemsRemaining: mintAvailableItems,
+  itemsRedeemed: 0,
+  hasSoldOut: false,
+  onMint: () => null,
 };
 
 const MintProviderContext =
@@ -61,53 +68,48 @@ const MintProviderContext =
 
 const MintProvider = ({ children }: { children: ReactNode }) => {
   const [mintProviderIsLoading, setMintProviderIsLoading] = useState(false);
+  const [isMinting, setIsMinting] = useState(false);
   const [walletShortValue, setWalletShortValue] = useState<string | null>(null);
   const [walletIsConnected, setWalletIsConnected] = useState(false);
-  const [walletRedeemables, setWalletRedeemables] = useState<
-    TargetMintItem[] | null
-  >(null);
-  // const [mintHasStarted, setMintHasStarted] = useState(false);
-  // const [mintHasSoldOut, setMintHasSoldOut] = useState(false);
-  // const [startDate, setStartDate] = useState(startDateSeed);
+  const [itemsAvailable, setItemsAvailable] = useState(mintAvailableItems);
+  const [itemsRemaining, setItemsRemaining] = useState(0);
+  const [itemsRedeemed, setItemsRedeemed] = useState(0);
+  const [hasSoldOut, setHasSoldOut] = useState(false);
 
   const wallet = useAnchorWallet();
-  // const [candyMachine, setCandyMachine] = useState<CandyMachine>();
+  const [candyMachine, setCandyMachine] = useState<CandyMachineAccount>();
 
-  useEffect(() => {
-    if (!wallet?.publicKey) {
-      return;
-    }
-    setMintProviderIsLoading(true);
+  const { sendNotification } = useNotifications();
+  const { alphaCount, setOptimisticCount } = useAlpha();
+
+  const refreshCandyMachineState = useCallback(() => {
+    console.log('refreshing');
     (async () => {
-      const res = await fetch(`api/getAvailableMints`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          walletPublicKey: wallet.publicKey.toBase58(),
-        }),
+      if (!wallet) return;
+      setMintProviderIsLoading(true);
+      const { id, program, state } = await getCandyMachineState(
+        wallet as anchor.Wallet,
+        candyMachineId,
+        connection
+      );
+      const { itemsAvailable, itemsRemaining, itemsRedeemed } = state;
+
+      setItemsAvailable(itemsAvailable);
+      setItemsRemaining(itemsRemaining);
+      setItemsRedeemed(itemsRedeemed);
+      setHasSoldOut(itemsRemaining === 0);
+      setCandyMachine({
+        id,
+        program,
+        state,
       });
-      const { mints } = await res.json();
-      setWalletRedeemables(mints);
       setMintProviderIsLoading(false);
     })();
-  }, [wallet?.publicKey]);
+  }, [wallet]);
 
-  // useEffect(() => {
-  //   if (!wallet) return;
-  //   (async () => {
-  //     const { candyMachine, goLiveDate, itemsRemaining } =
-  //       await getCandyMachineState(
-  //         wallet as anchor.Wallet,
-  //         candyMachineId,
-  //         connection
-  //       );
-  //     setMintHasSoldOut(itemsRemaining === 0);
-  //     setStartDate(goLiveDate);
-  //     setCandyMachine(candyMachine);
-  //   })();
-  // }, [wallet]);
+  useEffect(() => {
+    refreshCandyMachineState();
+  }, [refreshCandyMachineState]);
 
   useEffect(() => {
     if (!wallet) return;
@@ -115,16 +117,67 @@ const MintProvider = ({ children }: { children: ReactNode }) => {
     setWalletShortValue(shortenAddress(wallet.publicKey.toBase58()));
   }, [wallet]);
 
+  const onMint = async () => {
+    try {
+      setIsMinting(true);
+      if (wallet && candyMachine?.program) {
+        const mintTxId = await mintOneToken(candyMachine, wallet.publicKey);
+        const status = await awaitTransactionSignatureConfirmation(
+          mintTxId,
+          txTimeout,
+          connection,
+          'singleGossip',
+          false
+        );
+        if (!status?.err) {
+          sendNotification('Congratulations!', `Mint succeeded!`, 'success');
+          setOptimisticCount((alphaCount || 1) - 1);
+          setItemsRedeemed(itemsRedeemed + 1);
+        } else {
+          sendNotification('Mint failed! ', `Please try again!`, 'danger');
+        }
+      }
+    } catch (error: any) {
+      // triggers refresh
+      setOptimisticCount(alphaCount || 0);
+      let message = error.msg || 'Minting failed! Please try again!';
+      if (error.message) {
+        if (error.message.indexOf('0x138')) {
+        } else if (error.message.indexOf('0x137')) {
+          message = `SOLD OUT!`;
+          setHasSoldOut(true);
+        } else if (error.message.indexOf('0x135')) {
+          message = `Insufficient funds to mint. Please fund your wallet.`;
+        }
+      } else {
+        if (error.code === 311) {
+          message = `SOLD OUT!`;
+        } else if (error.code === 312) {
+          message = `Minting period hasn't started yet.`;
+        }
+      }
+
+      sendNotification('Mint failed! ', message, 'danger');
+    } finally {
+      setIsMinting(false);
+      setTimeout(() => {
+        refreshCandyMachineState();
+      }, 30000);
+    }
+  };
+
   return (
     <MintProviderContext.Provider
       value={{
         mintProviderIsLoading,
+        isMinting,
         walletShortValue,
         walletIsConnected,
-        walletRedeemables,
-        // mintHasStarted,
-        // mintHasSoldOut,
-        // startDate,
+        itemsAvailable,
+        itemsRedeemed,
+        itemsRemaining,
+        hasSoldOut,
+        onMint,
       }}
     >
       {children}
