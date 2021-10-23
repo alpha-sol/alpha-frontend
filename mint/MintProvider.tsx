@@ -37,7 +37,8 @@ const connection = new anchor.web3.Connection(rpcHost);
 
 const txTimeout = 30000; // milliseconds (confirm this works for your project)
 
-const mintAvailableItems = 500;
+const mintAvailableItems = 746;
+
 interface MintProviderContextValue {
   mintProviderIsLoading: boolean;
   isMinting: boolean;

@@ -30,7 +30,7 @@ const FAQ: NextPage<Record<string, unknown>> = () => {
       <div>
         <Image
           // @ts-ignore
-          src={`/assets/alpha-mint/${lastMint}.png`}
+          src={`/assets/alpha-spl-mint/${lastMint}.png`}
           width={450}
           height={450}
           alt="alpha logo"
